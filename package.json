@@ -1,0 +1,31 @@
+{
+  "name": "create-arma-app",
+  "version": "1.0.0",
+  "description": "cli react app builder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "create-easy-app": "bin/installer.mjs"
+  },
+  "keywords": [],
+  "author": "Armany Felix",
+  "license": "ISC",
+  "dependencies": {
+    "chalk-animation": "^2.0.3",
+    "commander": "^11.0.0",
+    "cross-spawn": "^7.0.3",
+    "picocolors": "^1.0.0",
+    "prompts": "^2.4.2",
+    "validate-npm-package-name": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/armanyfelix/create-arma-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/armanyfelix/create-arma-app/issues"
+  },
+  "homepage": "https://github.com/armanyfelix/create-arma-app#readme"
+}
