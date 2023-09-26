@@ -1,23 +1,32 @@
 {
-  "name": "create-arma-app",
+  "name": "create-ease-app",
   "version": "1.0.0",
   "description": "cli react app builder",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "create-easy-app": "bin/installer.mjs"
+    "create-ease-app": "bin/index.js"
   },
   "keywords": [],
   "author": "Armany Felix",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
+    "@types/cross-spawn": "^6.0.3",
+    "@types/node": "^20.7.0",
+    "@types/prompts": "^2.4.5",
+    "@types/tar": "^6.1.6",
+    "@types/validate-npm-package-name": "^4.0.0",
     "chalk-animation": "^2.0.3",
     "commander": "^11.0.0",
+    "conf": "^11.0.2",
     "cross-spawn": "^7.0.3",
     "picocolors": "^1.0.0",
     "prompts": "^2.4.2",
+    "ts-node": "^10.9.1",
+    "update-check": "^1.5.4",
     "validate-npm-package-name": "^5.0.0"
   },
   "repository": {
