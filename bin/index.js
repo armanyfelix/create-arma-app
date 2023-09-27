@@ -6,12 +6,13 @@ import prompts from "prompts";
 import { Command } from "commander";
 import checkForUpdate from "update-check";
 import packageJson from "../package.json" assert { type: "json" };
-import cp from "child_process";
 import path from "path";
 import fs from "fs";
+import spawn from "cross-spawn";
 import getPkgManager from "../helpers/get-pkg-manager.js";
 import validateNpmName from "../helpers/validate-pkg.js";
-import isFolderEmpty from '../helpers/is-folder-empty.js'
+import isFolderEmpty from "../helpers/is-folder-empty.js";
+import createNextApp from "../create-next-app.js";
 
 const log = console.log;
 let projectPath = "";
@@ -34,7 +35,7 @@ const onPromptState = (state) => {
 
 const program = new Command(packageJson.name)
   .version(packageJson.version)
-  .arguments("<project-directory>", "Proyect directory")
+  .arguments("[project-directory]")
   .usage(`${green("<project-directory>")} [options]`)
   .action((name) => {
     projectPath = name;
@@ -73,7 +74,7 @@ async function run() {
   }
 
   if (!projectPath) {
-    console.log(
+    log(
       "\nPlease specify the project directory:\n" +
         `  ${cyan(program.name())} ${green("<project-directory>")}\n` +
         "For example:\n" +
@@ -98,16 +99,16 @@ async function run() {
     process.exit(1);
   }
 
-    /**
+  /**
    * Verify the project dir is empty or doesn't exist
    */
-    const root = path.resolve(resolvedProjectPath)
-    const appName = path.basename(root)
-    const folderExists = fs.existsSync(root)
+  const root = path.resolve(resolvedProjectPath);
+  const appName = path.basename(root);
+  const folderExists = fs.existsSync(root);
 
-    if (folderExists && !isFolderEmpty(root, appName)) {
-      process.exit(1)
-    }
+  if (folderExists && !isFolderEmpty(root, appName)) {
+    process.exit(1);
+  }
 
   const base = await prompts([
     {
@@ -118,22 +119,22 @@ async function run() {
         {
           title: "pnpm",
           value: "pnpm",
-          description: "pnpm is the fastest package manager",
+          // description: "pnpm is the fastest package manager",
         },
         {
           title: "yarn",
           value: "yarn",
-          description: "yarn is an awesome package manager",
+          // description: "yarn is an awesome package manager",
         },
         {
           title: "npm",
           value: "npm",
-          description: "npm is the most popular package manager",
+          // description: "npm is the most popular package manager",
         },
         {
           title: "bun",
           value: "bun",
-          description: "bun is a new package manager",
+          // description: "bun is a new package manager",
         },
       ],
     },
@@ -147,58 +148,89 @@ async function run() {
           value: "create-next-app",
           description: "Create a Next.js proyect with they cli tool",
         },
-        {
-          title: "create-react-app",
-          value: "create-react-app",
-          description: "Create a classic React.js app",
-        },
-        {
-          title: "create astro",
-          value: "create astro",
-          description: "Create a new Astro app",
-        },
+        // {
+        //   title: "create-react-app",
+        //   value: "create-react-app",
+        //   description: "Create a classic React.js app",
+        // },
+        // {
+        //   title: "create astro",
+        //   value: "create astro",
+        //   description: "Create a new Astro app",
+        // },
       ],
     },
   ]);
 
-  switch (base.packageManager) {
-    case "pnpm":
-      switch (base.appLibrary) {
-        case "create-next-app":
-          const child = cp.spawn("npx", ["create-next-app", "hellospawn"]);
-
-          child.stdout.on("data", (data) => {
-            console.log(`stdout: ${data}`);
-          });
-
-          child.stderr.on("data", (data) => {
-            console.error(`stderr: ${data}`);
-          });
-
-          child.on("error", (error) => {
-            console.error(`error: ${error.message}`);
-          });
-
-          child.on("close", (code) => {
-            console.log(`child process exited with code ${code}`);
-          });
-
-          break;
-        case "create-react-app":
-          break;
-        case "create astro":
-          break;
-        default:
-          log("Error in selecting the app");
-          break;
+  switch (base.appLibrary) {
+    case "create-next-app":
+      log("Creating Next.js app");
+      const options = await createNextApp();
+      log(options);
+      let args = "";
+      if (options.typescript) {
+        args += " --ts";
+      } else {
+        args += " --js";
       }
+      if (options.eslint) {
+        args += " --eslint";
+      } else {
+        args += " --no-eslint";
+      }
+      if (options.tailwind) {
+        args += " --tailwind";
+      } else {
+        args += " --no-tailwind";
+      }
+      if (options.srcDir) {
+        args += " --src-dir";
+      } else {
+        args += " --no-src-dir";
+      }
+      if (options.app) {
+        args += " --app";
+      } else {
+        args += " --no-app";
+      }
+      if (options.alias) {
+        args += ` --import-alias '${options.alias}'`;
+      } else {
+        args += ` --import-alias '@/*'`;
+      }
+      // new Promise((resolve, reject) => {
+      /**
+       * Spawn the installation process.
+       */
+      args += ` --use-${base.packageManager}`;
+      log(packageManager);
+      const child = spawn(base.packageManager, ` create-next-app ${args}`, {
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          ADBLOCK: "1",
+          // we set NODE_ENV to development as pnpm skips dev
+          // dependencies when production
+          NODE_ENV: "development",
+          DISABLE_OPENCOLLECTIVE: "1",
+        },
+      });
+      // child.on("close", (code) => {
+      //   if (code !== 0) {
+      //     reject({ command: `${packageManager} ${args.join(" ")}` });
+      //     return;
+      //   }
+      //   resolve();
+      // });
+      // })
+      log(args);
       break;
-    case "yarn":
+    case "create-react-app":
       break;
-    case "npm":
+    case "create astro":
       break;
     default:
-      log("No package manager selected");
+      log("Error in selecting the app");
       break;
   }
 }
@@ -218,7 +250,7 @@ async function notifyUpdate() {
           ? "bun add -g create-ease-app"
           : "npm i -g create-ease-app";
 
-      console.log(
+      log(
         yellow(bold("A new version of `create-ease-app` is available!")) +
           "\n" +
           "You can update by running: " +
@@ -235,17 +267,14 @@ async function notifyUpdate() {
 run()
   .then(notifyUpdate)
   .catch(async (reason) => {
-    console.log();
-    console.log("Aborting installation.");
+    log();
+    log("Aborting installation.");
     if (reason.command) {
-      console.log(`  ${cyan(reason.command)} has failed.`);
+      log(`  ${cyan(reason.command)} has failed.`);
     } else {
-      console.log(
-        red("Unexpected error. Please report it as a bug:") + "\n",
-        reason
-      );
+      log(red("Unexpected error. Please report it as a bug:") + "\n", reason);
     }
-    console.log();
+    log();
 
     await notifyUpdate();
 
