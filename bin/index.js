@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-// import Conf from "conf";
 import pc from "picocolors";
 import prompts from "prompts";
 import { Command } from "commander";
@@ -8,8 +7,6 @@ import checkForUpdate from "update-check";
 import packageJson from "../package.json" assert { type: "json" };
 import path from "path";
 import fs from "fs";
-import cp from "child_process";
-import spawn from "cross-spawn";
 import getPkgManager from "../helpers/get-pkg-manager.js";
 import validateNpmName from "../helpers/validate-pkg.js";
 import isFolderEmpty from "../helpers/is-folder-empty.js";
@@ -47,7 +44,6 @@ const program = new Command(packageJson.name)
 const packageManager = getPkgManager();
 
 async function run() {
-  // const confd = new conf({ projectName: 'create-next-app' })
 
   if (typeof projectPath === "string") {
     projectPath = projectPath.trim();
@@ -146,17 +142,17 @@ async function run() {
       choices: [
         {
           title: "create-next-app",
-          value: "create-next-app",
+          value: "next",
           description: "Create a Next.js proyect with they cli tool",
         },
         // {
         //   title: "create-react-app",
-        //   value: "create-react-app",
+        //   value: "react",
         //   description: "Create a classic React.js app",
         // },
         // {
         //   title: "create astro",
-        //   value: "create astro",
+        //   value: "astro",
         //   description: "Create a new Astro app",
         // },
       ],
@@ -164,25 +160,24 @@ async function run() {
   ]);
 
   // const install = spawn(base.packageManager, ["install", "-g", "create-next-app"], { stdio: 'inherit' });
-
   // install.stdout.on("data", (data) => {
   //   console.log("data :>> ", data);
   // })
 
-  // console.log('install :>> ', install);
-
   switch (base.appLibrary) {
-    case "create-next-app":
+    case "next":
       log("Creating Next.js app");
-      const options = await createNextApp(projectName, base.packageManager);
-      console.log("options , crazy shit happening :>> ");
+      const status = await createNextApp(projectName, base.packageManager);
+      if (status === 0) {
+      }
       break;
-    case "create-react-app":
+    case "react":
       break;
-    case "create astro":
+    case "astro":
       break;
     default:
       log("Error in selecting the app");
+      process.exit(1);
       break;
   }
 }
