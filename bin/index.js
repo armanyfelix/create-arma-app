@@ -14,7 +14,7 @@ import createNextApp from "../create-next-app.js";
 
 const log = console.log;
 let projectPath = "";
-const { green, cyan, yellow, red, bold } = pc;
+const { green, cyan, yellow, red, bold, bgRed, bgGreen, magenta } = pc;
 
 const handleSigTerm = () => process.exit(0);
 
@@ -44,7 +44,6 @@ const program = new Command(packageJson.name)
 const packageManager = getPkgManager();
 
 async function run() {
-
   if (typeof projectPath === "string") {
     projectPath = projectPath.trim();
   }
@@ -107,7 +106,7 @@ async function run() {
     process.exit(1);
   }
 
-  const base = await prompts([
+  const init = await prompts([
     {
       type: "select",
       name: "packageManager",
@@ -164,11 +163,21 @@ async function run() {
   //   console.log("data :>> ", data);
   // })
 
-  switch (base.appLibrary) {
+  switch (init.appLibrary) {
     case "next":
       log("Creating Next.js app");
-      const status = await createNextApp(projectName, base.packageManager);
+      const status = await createNextApp(projectName, init.packageManager);
       if (status === 0) {
+        console.log(
+          bgGreen(" READY "),
+          "Your next.js app it's ready! Let's start the configuration...\n"
+        );
+      } else {
+        console.log(
+          bgRed("Failed!"),
+          "Unexpected error. The process ended. Be sure that the package manager it's installed \n"
+        );
+        process.exit(status);
       }
       break;
     case "react":
@@ -178,10 +187,132 @@ async function run() {
     default:
       log("Error in selecting the app");
       process.exit(1);
-      break;
   }
+  const extras = await prompts([
+    {
+      type: "select",
+      name: "app",
+      message: `Do you want to a ${magenta("UI components")} library?`,
+      choices: [
+        {
+          title: "None",
+          value: "none",
+        },
+        {
+          title: "NextUI",
+          value: "nextui",
+        },
+        {
+          title: "DaisyUI",
+          value: "daisyui",
+        },
+        {
+          title: "Shadcn/ui",
+          value: "shadcnui",
+        },
+        {
+          title: "KonstaUI",
+          value: "konstaui",
+        },
+      ],
+    },
+    {
+      type: "select",
+      name: "stateManager",
+      message: `Maybe a ${magenta("state manager")}?`,
+      choices: [
+        {
+          title: "None",
+          value: "none",
+        },
+        {
+          title: "Zustand",
+          value: "zustand",
+        },
+        {
+          title: "Redux",
+          value: "redux",
+        },
+      ],
+    },
+    {
+      type: "select",
+      name: "orm",
+      message: `Do you need a ${magenta("ORM")}?`,
+      choices: [
+        {
+          title: "None",
+          value: "none",
+        },
+        {
+          title: "Drizzle",
+          value: "drizzle",
+        },
+        {
+          title: "Prisma",
+          value: "prisma",
+        },
+      ],
+    },
+    {
+      type: "select",
+      name: "api",
+      message: `What type of ${magenta("API")} do you want to build?`,
+      choices: [
+        {
+          title: "REST Api (default)",
+          value: "rest",
+        },
+        {
+          title: "GraphQL",
+          value: "graphql",
+        },
+        {
+          title: "tRPC",
+          value: "trpc",
+        },
+        {
+          title: "gRPC",
+          value: "grpc",
+        },
+      ],
+    },
+    {
+      type: "select",
+      name: "auth",
+      message: `Do you need ${magenta("authentication")}`,
+      choices: [
+        {
+          title: "None",
+          value: "none",
+        },
+        {
+          title: "Next-Auth",
+          value: "next-auth",
+        },
+        {
+          title: "clark",
+          value: "clark",
+        },
+      ],
+    },
+    {
+      type: "select",
+      name: "theme",
+      message: `Default ${magenta("theme")}:`,
+      choices: [
+        {
+          title: "Dark",
+          value: "dark",
+        },
+        {
+          title: "Light",
+          value: "light",
+        },
+      ],
+    },
+  ]);
 }
-
 const update = checkForUpdate(packageJson).catch(() => null);
 
 async function notifyUpdate() {

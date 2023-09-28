@@ -3,7 +3,7 @@ import pc from "picocolors";
 import { spawn } from "cross-spawn";
 
 export default async function createNextApp(projectName, packageManager) {
-  const { blue, bgRed } = pc;
+  const { blue, bgMagenta } = pc;
   let options = await prompts([
     {
       type: "toggle",
@@ -125,6 +125,8 @@ export default async function createNextApp(projectName, packageManager) {
   }
   args.push(`--use-${packageManager}`);
 
+  console.log(`\n${bgMagenta(" RUNNING ")} ${pkg} ${args.join(" ")}\n`);
+
   const child = spawn.sync(pkg, args, {
     stdio: "inherit",
     env: {
@@ -137,17 +139,14 @@ export default async function createNextApp(projectName, packageManager) {
     },
   });
 
-  if (child.status === 0) {
-    console.log(green("Next.js app created successfully"));
-    console.log("Now let's start adding the extra packages");
-  } else {
-    console.log(bgRed("Failed!"), " The process ended.");
-    console.log();
-    process.exit(child.status);
-  }
+  // const child = await exec(`${pkg} ${args.join(" ")}`, (error, stdout, stderr) => {
+  //   if (error) {
+  //     console.error(`exec error: ${error}`);
+  //     return;
+  //   }
+  //   console.log(`stdout: ${stdout}`);
+  //   console.log(`stderr: ${stderr}`);
+  // })
 
-  // child.on("close", (data) => {
-  //   console.log("data :>>", data);
-  // });
-  // return options;
+  return child.status;
 }
