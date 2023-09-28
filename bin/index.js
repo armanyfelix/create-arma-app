@@ -8,6 +8,7 @@ import checkForUpdate from "update-check";
 import packageJson from "../package.json" assert { type: "json" };
 import path from "path";
 import fs from "fs";
+import cp from "child_process";
 import spawn from "cross-spawn";
 import getPkgManager from "../helpers/get-pkg-manager.js";
 import validateNpmName from "../helpers/validate-pkg.js";
@@ -162,68 +163,19 @@ async function run() {
     },
   ]);
 
+  // const install = spawn(base.packageManager, ["install", "-g", "create-next-app"], { stdio: 'inherit' });
+
+  // install.stdout.on("data", (data) => {
+  //   console.log("data :>> ", data);
+  // })
+
+  // console.log('install :>> ', install);
+
   switch (base.appLibrary) {
     case "create-next-app":
       log("Creating Next.js app");
-      const options = await createNextApp();
-      log(options);
-      let args = "";
-      if (options.typescript) {
-        args += " --ts";
-      } else {
-        args += " --js";
-      }
-      if (options.eslint) {
-        args += " --eslint";
-      } else {
-        args += " --no-eslint";
-      }
-      if (options.tailwind) {
-        args += " --tailwind";
-      } else {
-        args += " --no-tailwind";
-      }
-      if (options.srcDir) {
-        args += " --src-dir";
-      } else {
-        args += " --no-src-dir";
-      }
-      if (options.app) {
-        args += " --app";
-      } else {
-        args += " --no-app";
-      }
-      if (options.alias) {
-        args += ` --import-alias '${options.alias}'`;
-      } else {
-        args += ` --import-alias '@/*'`;
-      }
-      // new Promise((resolve, reject) => {
-      /**
-       * Spawn the installation process.
-       */
-      args += ` --use-${base.packageManager}`;
-      log(packageManager);
-      const child = spawn(base.packageManager, ` create-next-app ${args}`, {
-        stdio: "inherit",
-        env: {
-          ...process.env,
-          ADBLOCK: "1",
-          // we set NODE_ENV to development as pnpm skips dev
-          // dependencies when production
-          NODE_ENV: "development",
-          DISABLE_OPENCOLLECTIVE: "1",
-        },
-      });
-      // child.on("close", (code) => {
-      //   if (code !== 0) {
-      //     reject({ command: `${packageManager} ${args.join(" ")}` });
-      //     return;
-      //   }
-      //   resolve();
-      // });
-      // })
-      log(args);
+      const options = await createNextApp(projectName, base.packageManager);
+      console.log("options , crazy shit happening :>> ");
       break;
     case "create-react-app":
       break;
@@ -280,87 +232,3 @@ run()
 
     process.exit(1);
   });
-
-// log('Yourname :>> ', chalk.red(answer))
-
-// setInterval(() => {
-//   const welcome = "Welcome to arma!"
-// }, 1000)
-
-// if (process.argv.length < 3) {
-//   console.log("You have to provide a name to your app.");
-//   console.log("For example :");
-//   console.log("    npx simple-ts-app my-app");
-//   process.exit(1);
-// }
-
-// const projectName = process.argv[2];
-// const currentPath = process.cwd();
-// const projectPath = path.join(currentPath, projectName);
-// // TODO: change to your boilerplate repo
-// const git_repo = "https://github.com/programonaut/simple-ts-app.git";
-
-// // create project directory
-// if (fs.existsSync(projectPath)) {
-//   console.log(
-//     `The file ${projectName} already exist in the current directory, please give it another name.`
-//   );
-//   process.exit(1);
-// } else {
-//   fs.mkdirSync(projectPath);
-// }
-
-// try {
-//   // const gitSpinner = ora("Downloading files...").start();
-//   // clone the repo into the project folder -> creates the new boilerplate
-//   await exec(`git clone --depth 1 ${git_repo} ${projectPath} --quiet`);
-//   // gitSpinner.succeed();
-
-//   let i = 0;
-//   process.stdout.write("Cargando ");
-//   let interval = setInterval(() => {
-//     process.stdout.clearLine();
-//     process.stdout.cursorTo(0);
-//     i = (i + 1) % 4;
-//     let dots = new Array(i + 1).join(".");
-//     process.stdout.write("Cargando " + dots);
-//   }, 500);
-
-//   setTimeout(() => {
-//     clearInterval(interval);
-//     process.stdout.clearLine();
-//     process.stdout.cursorTo(0);
-//     console.log("¡Hecho!");
-//   }, 5000);
-
-//   // const cleanSpinner = ora("Removing useless files").start();
-//   // remove my git history
-//   const rmGit = rm(path.join(projectPath, ".git"), {
-//     recursive: true,
-//     force: true,
-//   });
-//   // remove the installation file
-//   const rmBin = rm(path.join(projectPath, "bin"), {
-//     recursive: true,
-//     force: true,
-//   });
-//   await Promise.all([rmGit, rmBin]);
-
-//   process.chdir(projectPath);
-//   // remove the packages needed for cli
-//   // await exec("npm uninstall ora cli-spinners");
-//   // cleanSpinner.succeed();
-
-//   // const npmSpinner = ora("Installing dependencies...").start();
-//   await exec("npm install");
-//   //npmSpinner.succeed();
-
-//   console.log("The installation is done!");
-//   console.log("You can now run your app with:");
-//   console.log(`    cd ${projectName}`);
-//   console.log(`    npm run dev`);
-// } catch (error) {
-//   // clean up in case of error, so the user does not have to do it manually
-//   fs.rmSync(projectPath, { recursive: true, force: true });
-//   console.log(error);
-// }
