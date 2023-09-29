@@ -9,9 +9,6 @@ export default function validateNpmName(name) {
 
   return {
     valid: false,
-    problems: [
-      ...(nameValidation.errors || []),
-      ...(nameValidation.warnings || []),
-    ],
+    problems: [...(nameValidation.errors || []), ...(nameValidation.warnings || [])],
   }
 }
