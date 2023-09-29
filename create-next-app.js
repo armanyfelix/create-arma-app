@@ -3,7 +3,7 @@ import pc from "picocolors";
 import { spawn } from "cross-spawn";
 
 export default async function createNextApp(projectName, packageManager) {
-  const { blue, bgMagenta } = pc;
+  const { blue, bgMagenta, bgRed } = pc;
   let options = await prompts([
     {
       type: "toggle",
@@ -66,6 +66,15 @@ export default async function createNextApp(projectName, packageManager) {
       },
     ]);
     options = { ...options, ...alias };
+  }
+
+  if (Object.keys(options).length !== 6) {
+    console.log(
+      `\n${bgRed(
+        " FAILED "
+      )} Process ended. You must select all the options. \n`
+    );
+    process.exit(1);
   }
 
   const args = [];
@@ -148,5 +157,8 @@ export default async function createNextApp(projectName, packageManager) {
   //   console.log(`stderr: ${stderr}`);
   // })
 
-  return child.status;
+  return {
+    status: child.status,
+    options,
+  };
 }

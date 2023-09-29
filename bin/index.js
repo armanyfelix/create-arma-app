@@ -11,6 +11,8 @@ import getPkgManager from "../helpers/get-pkg-manager.js";
 import validateNpmName from "../helpers/validate-pkg.js";
 import isFolderEmpty from "../helpers/is-folder-empty.js";
 import createNextApp from "../create-next-app.js";
+import spawn from "cross-spawn";
+import { exec } from "child_process";
 
 const log = console.log;
 let projectPath = "";
@@ -137,18 +139,19 @@ async function run() {
     {
       type: "select",
       name: "appLibrary",
-      message: "What kind of app do you want to create",
+      message: "What kind of app do you want to create:",
       choices: [
         {
           title: "create-next-app",
           value: "next",
           description: "Create a Next.js proyect with they cli tool",
         },
-        // {
-        //   title: "create-react-app",
-        //   value: "react",
-        //   description: "Create a classic React.js app",
-        // },
+        {
+          title: "create-react-app",
+          value: "react",
+          description: "Create a classic React.js app",
+          disabled: true,
+        },
         // {
         //   title: "create astro",
         //   value: "astro",
@@ -158,23 +161,21 @@ async function run() {
     },
   ]);
 
-  // const install = spawn(base.packageManager, ["install", "-g", "create-next-app"], { stdio: 'inherit' });
-  // install.stdout.on("data", (data) => {
-  //   console.log("data :>> ", data);
-  // })
+  let appOptions = null;
 
   switch (init.appLibrary) {
     case "next":
       log("Creating Next.js app");
-      const status = await createNextApp(projectName, init.packageManager);
-      if (status === 0) {
-        console.log(
+      const next = await createNextApp(projectName, init.packageManager);
+      appOptions = next.options;
+      if (next.status === 0) {
+        log(
           bgGreen(" READY "),
-          "Your next.js app it's ready! Let's start the configuration...\n"
+          "Your next.js app it's ready! Let's start the configuration ...\n"
         );
       } else {
-        console.log(
-          bgRed("Failed!"),
+        log(
+          bgRed(" Failed! "),
           "Unexpected error. The process ended. Be sure that the package manager it's installed \n"
         );
         process.exit(status);
@@ -185,34 +186,37 @@ async function run() {
     case "astro":
       break;
     default:
-      log("Error in selecting the app");
+      log(`\n${bgRed(" Failed! ")} The app library is not selected.\n`);
       process.exit(1);
   }
+
   const extras = await prompts([
-    {
+    appOptions.tailwind && {
       type: "select",
-      name: "app",
-      message: `Do you want to a ${magenta("UI components")} library?`,
+      name: "ui",
+      message: `Do you want to a ${magenta(
+        "UI components"
+      )} library? (using Tailwind)`,
       choices: [
         {
           title: "None",
-          value: "none",
+          value: false,
         },
         {
           title: "NextUI",
-          value: "nextui",
+          value: "NextUI",
         },
         {
           title: "DaisyUI",
-          value: "daisyui",
+          value: "DaisyUI",
         },
         {
           title: "Shadcn/ui",
-          value: "shadcnui",
+          value: "Shadcn/ui",
         },
         {
           title: "KonstaUI",
-          value: "konstaui",
+          value: "KonstaUI",
         },
       ],
     },
@@ -223,15 +227,15 @@ async function run() {
       choices: [
         {
           title: "None",
-          value: "none",
+          value: false,
         },
         {
           title: "Zustand",
-          value: "zustand",
+          value: "Zustand",
         },
         {
           title: "Redux",
-          value: "redux",
+          value: "Redux",
         },
       ],
     },
@@ -242,15 +246,15 @@ async function run() {
       choices: [
         {
           title: "None",
-          value: "none",
+          value: false,
         },
         {
           title: "Drizzle",
-          value: "drizzle",
+          value: "Drizzle",
         },
         {
           title: "Prisma",
-          value: "prisma",
+          value: "Prisma",
         },
       ],
     },
@@ -260,20 +264,20 @@ async function run() {
       message: `What type of ${magenta("API")} do you want to build?`,
       choices: [
         {
-          title: "REST Api (default)",
-          value: "rest",
+          title: "REST (default)",
+          value: false,
         },
         {
           title: "GraphQL",
-          value: "graphql",
+          value: "GraphQL",
         },
         {
           title: "tRPC",
-          value: "trpc",
+          value: "tRPC",
         },
         {
           title: "gRPC",
-          value: "grpc",
+          value: "gRPC",
         },
       ],
     },
@@ -284,15 +288,15 @@ async function run() {
       choices: [
         {
           title: "None",
-          value: "none",
+          value: false,
         },
         {
           title: "Next-Auth",
-          value: "next-auth",
+          value: "Next-Auth",
         },
         {
-          title: "clark",
-          value: "clark",
+          title: "Clark",
+          value: "Clark",
         },
       ],
     },
@@ -303,16 +307,66 @@ async function run() {
       choices: [
         {
           title: "Dark",
-          value: "dark",
+          value: "Dark",
         },
         {
           title: "Light",
-          value: "light",
+          value: "Light",
         },
       ],
     },
   ]);
+
+  if (Object.keys(extras).length !== 6) {
+    process.exit(1);
+  }
+
+  if (extras.ui) {
+    log(`Installing ${magenta(extras.ui)} ...`);
+    switch (extras.ui) {
+      case "NextUI":
+        const args = [packageManager];
+        if (packageManager === "npm") {
+          args.push("install");
+        } else {
+          args.push("add");
+        }
+        args.push("@nextui-org/react", "framer motion");
+        const res = spawn.sync(packageManager, args, {
+          stdio: "inherit",
+          cwd: `./${projectName}`,
+        });
+        if (res.status === 0) {
+          log(`${bgGreen(" Success ")} ${extras.ui} installed`);
+        } else {
+          log(
+            `${bgRed(" Failed ")} Unexpected error installing ${magenta(
+              extras.ui
+            )}`
+          );
+        }
+        break;
+      default:
+        break;
+    }
+  }
+  if (extras.stateManager) {
+    log(`Installing ${magenta(extras.stateManager)} ...`);
+  }
+  if (extras.orm) {
+    log(`Installing ${magenta(extras.orm)} ...`);
+  }
+  if (extras.api) {
+    log(`Installing ${magenta(extras.api)} ...`);
+  }
+  if (extras.auth) {
+    log(`Installing ${magenta(extras.auth)} ...`);
+  }
+  if (extras.theme) {
+    log(`Going to the ${magenta(extras.theme)} mode ...`);
+  }
 }
+
 const update = checkForUpdate(packageJson).catch(() => null);
 
 async function notifyUpdate() {
