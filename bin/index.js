@@ -11,7 +11,7 @@ import getPkgManager from '../helpers/get-pkg-manager.js'
 import validateNpmName from '../helpers/validate-pkg.js'
 import isFolderEmpty from '../helpers/is-folder-empty.js'
 import createNextApp from '../commands/create-next-app.js'
-import generateNextUI from '../generators/ui/nextui.js'
+import generateNextUI from '../generators/ui/nextui/generate.js'
 
 const log = console.log
 let projectPath = ''
@@ -107,7 +107,7 @@ async function run() {
     process.exit(1)
   }
 
-  const initPrompts = await prompts([
+  const initOptions = await prompts([
     {
       type: 'select',
       name: 'packageManager',
@@ -157,10 +157,10 @@ async function run() {
   ])
 
   let appOptions = null
-  switch (initPrompts.appLibrary) {
+  switch (initOptions.appLibrary) {
     case 'next':
       log('Creating Next.js app')
-      const res = await createNextApp(projectName, initPrompts.packageManager)
+      const res = await createNextApp(projectName, initOptions.packageManager)
       appOptions = res.options
       if (res.status === 0) {
         log(
@@ -184,7 +184,7 @@ async function run() {
       process.exit(1)
   }
 
-  const configPrompts = await prompts([
+  const configOptions = await prompts([
     appOptions.tailwind && {
       type: 'select',
       name: 'ui',
@@ -309,37 +309,36 @@ async function run() {
     },
   ])
 
-  if (Object.keys(configPrompts).length !== 6) {
+  if (Object.keys(configOptions).length !== 6) {
     process.exit(1)
   }
 
   // Installing UI components
-  if (configPrompts.ui) {
+  if (configOptions.ui) {
     // log(`\nInstalling ${magenta(.ui)} ...\n`);
-    switch (configPrompts.ui) {
+    switch (configOptions.ui) {
       case 'nextui':
-        const res = await generateNextUI(initPrompts.packageManager, projectName)
-        log('res :>> ', res)
+        await generateNextUI(initOptions.packageManager, projectName, appOptions)
         break
       default:
         break
     }
   }
 
-  if (configPrompts.stateManager) {
-    log(`\nInstalling ${magenta(configPrompts.stateManager)} ...\n`)
+  if (configOptions.stateManager) {
+    log(`\nInstalling ${magenta(configOptions.stateManager)} ...\n`)
   }
-  if (configPrompts.orm) {
-    log(`\nInstalling ${magenta(configPrompts.orm)} ...\n`)
+  if (configOptions.orm) {
+    log(`\nInstalling ${magenta(configOptions.orm)} ...\n`)
   }
-  if (configPrompts.api) {
-    log(`\nInstalling ${magenta(configPrompts.api)} ...\n`)
+  if (configOptions.api) {
+    log(`\nInstalling ${magenta(configOptions.api)} ...\n`)
   }
-  if (configPrompts.auth) {
-    log(`\nInstalling ${magenta(configPrompts.auth)} ...\n`)
+  if (configOptions.auth) {
+    log(`\nInstalling ${magenta(configOptions.auth)} ...\n`)
   }
-  if (configPrompts.theme) {
-    log(`\nGoing to the ${magenta(configPrompts.theme)} mode ...\n`)
+  if (configOptions.theme) {
+    log(`\nGoing to the ${magenta(configOptions.theme)} mode ...\n`)
   }
 }
 

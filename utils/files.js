@@ -1,15 +1,15 @@
 import fs from 'fs'
 import path from 'path'
 
-export function createFile(filePath, fileName, data) {
+export function handleFile(filePath, fileName, content) {
   const resolvedPath = path.resolve(filePath, fileName)
+  console.log('resolvedPath :>> ', resolvedPath)
   const dirName = path.dirname(resolvedPath)
-  // Check if the directory exists
+  console.log('dirName :>> ', dirName)
   if (!fs.existsSync(resolvedPath)) {
-    // If not, create the directory and any nested directories that might be needed
     fs.mkdirSync(dirName, { recursive: true })
   }
-  fs.writeFileSync(resolvedPath, data)
+  const res = fs.writeFileSync(resolvedPath, content)
   console.log(`File created at ${resolvedPath}`)
 }
 
@@ -20,15 +20,13 @@ export function injectFile(filePath, fileName, data) {
   if (!fs.existsSync(resolvedPath)) {
     // If not, create the directory and any nested directories that might be needed
     fs.mkdirSync(dirName, { recursive: true })
+    console.log(`Directory created at ${resolvedPath}`)
   }
 
   const fileContent = fs.readFileSync(resolvedPath, 'utf-8').split('\n')
-  console.log('fileContent :>> ', fileContent)
   data.forEach((d) => {
-    fileContent.splice(d.line, 0, d.content)
-  });
-  console.log('fileContent edited :>> ', fileContent);
+    fileContent.splice(d.line - 1, d.replace, d.content)
+    console.log(`File injected at line ${d.line} in ${resolvedPath}`)
+  })
   fs.writeFileSync(resolvedPath, fileContent.join('\n'))
-  console.log(`File injected at ${resolvedPath} line 7`)
 }
-
