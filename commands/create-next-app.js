@@ -48,7 +48,7 @@ export default async function createNextApp(projectName, packageManager) {
     {
       type: 'toggle',
       name: 'alias',
-      message: `Would you like to customize the default ${blue('import alias')}?`,
+      message: `Would you like to customize the default ${blue('import alias')} (@/*)?`,
       initial: false,
       active: 'Yes',
       inactive: 'No',
@@ -88,7 +88,7 @@ export default async function createNextApp(projectName, packageManager) {
       break
     case 'npm':
       pkg = 'npx'
-      args.push('create-next-app')
+      args.push('create-next-app@latest')
       break
     case 'bun':
       pkg = 'bunx'

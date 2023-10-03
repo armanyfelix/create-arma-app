@@ -12,6 +12,9 @@ import validateNpmName from '../helpers/validate-pkg.js'
 import isFolderEmpty from '../helpers/is-folder-empty.js'
 import createNextApp from '../commands/create-next-app.js'
 import generateNextUI from '../generators/ui/nextui/generate.js'
+import generateDaisyUI from '../generators/ui/daisyui/generate.js'
+import generateShadcnUI from '../generators/ui/shadcnui/generate.js'
+import generateZustand from '../generators/state/zustand/generate.js'
 
 const log = console.log
 let projectPath = ''
@@ -164,13 +167,15 @@ async function run() {
       appOptions = res.options
       if (res.status === 0) {
         log(
-          bgGreen(' READY '),
-          "Your next.js app it's ready! Let's start the configuration ...\n"
+          `\n${bgGreen(
+            ' READY '
+          )} Your next.js app it's ready! Let's start the configuration ...\n`
         )
       } else {
         log(
-          bgRed(' FAILED '),
-          "Unexpected error. The process ended. Be sure that the package manager it's installed\n"
+          `\n${bgRed(
+            ' FAILED '
+          )} Unexpected error. The process ended. Be sure that the package manager it's installed\n`
         )
         process.exit(res.status)
       }
@@ -315,18 +320,34 @@ async function run() {
 
   // Installing UI components
   if (configOptions.ui) {
-    // log(`\nInstalling ${magenta(.ui)} ...\n`);
     switch (configOptions.ui) {
       case 'nextui':
         await generateNextUI(initOptions.packageManager, projectName, appOptions)
         break
+      case 'daisyui':
+        await generateDaisyUI(initOptions.packageManager, projectName, appOptions)
+        break
+      case 'shadcnui':
+        await generateShadcnUI(initOptions.packageManager, projectName)
+        break
       default:
+        log(`\nUI library not selected.\n`)
         break
     }
   }
 
   if (configOptions.stateManager) {
-    log(`\nInstalling ${magenta(configOptions.stateManager)} ...\n`)
+    switch (configOptions.stateManager) {
+      case 'zustand':
+        await generateZustand(initOptions.packageManager, projectName)
+        break
+      // case 'redux':
+      //   await generateRedux(initOptions.packageManager, projectName)
+      //   break
+      default:
+        log(`\nState manager not selected.\n`)
+        break
+    }
   }
   if (configOptions.orm) {
     log(`\nInstalling ${magenta(configOptions.orm)} ...\n`)

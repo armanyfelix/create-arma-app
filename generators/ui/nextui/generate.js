@@ -72,7 +72,6 @@ export default async function generateNextUI(packageManager, projectName, appOpt
       }
     }
     handleFile(filePath, providersName, providersContent)
-    console.log('filePath :>> ', filePath)
 
     // (4) Add Provider to root layout if app directory
     if (appOptions.app) {
@@ -85,7 +84,7 @@ export default async function generateNextUI(packageManager, projectName, appOpt
         layoutName = 'layout.js'
         layoutContent = layoutJs
       }
-      handleFile(filePath, layoutName, providersContent)
+      handleFile(filePath, layoutName, layoutContent)
     }
 
     // (5) Use NextUI Components, create a button
