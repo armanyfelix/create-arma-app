@@ -14,6 +14,7 @@
   "author": "Armany Felix",
   "license": "MIT",
   "dependencies": {
+    "@apollo/client": "^3.8.4",
     "@types/cross-spawn": "^6.0.3",
     "@types/node": "^20.7.0",
     "@types/prompts": "^2.4.5",
@@ -23,6 +24,7 @@
     "commander": "^11.0.0",
     "conf": "^11.0.2",
     "cross-spawn": "^7.0.3",
+    "graphql": "^16.8.1",
     "picocolors": "^1.0.0",
     "prompts": "^2.4.2",
     "ts-node": "^10.9.1",

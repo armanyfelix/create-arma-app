@@ -15,6 +15,7 @@ import generateNextUI from '../generators/ui/nextui/generate.js'
 import generateDaisyUI from '../generators/ui/daisyui/generate.js'
 import generateShadcnUI from '../generators/ui/shadcnui/generate.js'
 import generateZustand from '../generators/state/zustand/generate.js'
+import generateRedux from '../generators/state/redux/generate.js'
 
 const log = console.log
 let projectPath = ''
@@ -180,10 +181,6 @@ async function run() {
         process.exit(res.status)
       }
       break
-    case 'react':
-      break
-    case 'astro':
-      break
     default:
       log(`\n${bgRed(' FAILED ')} The app library is not selected.\n`)
       process.exit(1)
@@ -211,10 +208,10 @@ async function run() {
           title: 'Shadcn/ui',
           value: 'shadcnui',
         },
-        {
-          title: 'KonstaUI',
-          value: 'konstaui',
-        },
+        // {
+        //   title: 'KonstaUI',
+        //   value: 'konstaui',
+        // },
       ],
     },
     {
@@ -238,6 +235,29 @@ async function run() {
     },
     {
       type: 'select',
+      name: 'api',
+      message: `What type of ${magenta('API')} do you want to build?`,
+      choices: [
+        {
+          title: 'None (REST)',
+          value: false,
+        },
+        {
+          title: 'GraphQL',
+          value: 'graphql',
+        },
+        {
+          title: 'tRPC',
+          value: 'trpc',
+        },
+        // {
+        //   title: 'gRPC',
+        //   value: 'grpc',
+        // },
+      ],
+    },
+    {
+      type: 'select',
       name: 'orm',
       message: `Do you need a ${magenta('ORM')}?`,
       choices: [
@@ -257,29 +277,6 @@ async function run() {
     },
     {
       type: 'select',
-      name: 'api',
-      message: `What type of ${magenta('API')} do you want to build?`,
-      choices: [
-        {
-          title: 'REST (default)',
-          value: false,
-        },
-        {
-          title: 'GraphQL',
-          value: 'graphql',
-        },
-        {
-          title: 'tRPC',
-          value: 'trpc',
-        },
-        {
-          title: 'gRPC',
-          value: 'grpc',
-        },
-      ],
-    },
-    {
-      type: 'select',
       name: 'auth',
       message: `Do you need ${magenta('authentication')}`,
       choices: [
@@ -291,10 +288,10 @@ async function run() {
           title: 'Next-Auth',
           value: 'next-auth',
         },
-        {
-          title: 'Clark',
-          value: 'clark',
-        },
+        // {
+        //   title: 'Clark',
+        //   value: 'clark',
+        // },
       ],
     },
     {
@@ -341,9 +338,9 @@ async function run() {
       case 'zustand':
         await generateZustand(initOptions.packageManager, projectName)
         break
-      // case 'redux':
-      //   await generateRedux(initOptions.packageManager, projectName)
-      //   break
+      case 'redux':
+        await generateRedux(initOptions.packageManager, projectName)
+        break
       default:
         log(`\nState manager not selected.\n`)
         break

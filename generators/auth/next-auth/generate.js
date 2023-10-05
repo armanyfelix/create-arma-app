@@ -1,14 +1,9 @@
 import pc from 'picocolors'
 import spawn from 'cross-spawn'
 
-/*
- * References:
- * https://redux.js.org/introduction/getting-started
- * https://jscrambler.com/blog/working-with-redux-in-next-js
- * https://blog.logrocket.com/use-redux-next-js
- */
+// Reference: https://next-auth.js.org/getting-started/example
 
-export default async function generateRedux(packageManager, projectName) {
+export default async function generateGraphQL(packageManager, projectName, appOptions) {
   const { magenta, bgRed, bgMagenta } = pc
   const args = []
 
@@ -17,9 +12,7 @@ export default async function generateRedux(packageManager, projectName) {
   } else {
     args.push('add')
   }
-  args.push('@reduxjs/toolkit')
-  args.push('react-redux')
-  args.push('next-redux-wrapper')
+  args.push('next-auth')
 
   console.log(`\n${bgMagenta(' Running ')} ${packageManager} ${args.join(' ')}\n`)
   const child = spawn.sync(packageManager, args, {
@@ -28,6 +21,6 @@ export default async function generateRedux(packageManager, projectName) {
   })
 
   if (child.status !== 0) {
-    console.log(`${bgRed(' Failed ')} Unexpected error installing ${magenta('Redux')}`)
+    console.log(`${bgRed(' Failed ')} Unexpected error installing ${magenta('NextAuth')}`)
   }
 }
