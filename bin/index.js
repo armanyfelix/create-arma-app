@@ -16,6 +16,7 @@ import generateDaisyUI from '../generators/ui/daisyui/generate.js'
 import generateShadcnUI from '../generators/ui/shadcnui/generate.js'
 import generateZustand from '../generators/state/zustand/generate.js'
 import generateRedux from '../generators/state/redux/generate.js'
+import generateHomePage from '../generators/home/generate'
 
 const log = console.log
 let projectPath = ''
@@ -221,6 +222,7 @@ async function run() {
       choices: [
         {
           title: 'None',
+          description: 'You can use react context.',
           value: false,
         },
         {
@@ -294,25 +296,22 @@ async function run() {
         // },
       ],
     },
-    {
-      type: 'select',
-      name: 'theme',
-      message: `Default ${magenta('theme')}:`,
-      choices: [
-        {
-          title: 'Dark',
-          value: 'dark',
-        },
-        {
-          title: 'Light',
-          value: 'light',
-        },
-      ],
-    },
   ])
 
-  if (Object.keys(configOptions).length !== 6) {
+  // Finish the process if cancel the selection of configOptions
+  if (Object.keys(configOptions).length !== 5) {
     process.exit(1)
+  }
+
+  // No extra library selected
+  if (
+    !configOptions.ui &&
+    !configOptions.stateManager &&
+    !configOptions.orm &&
+    !configOptions.api &&
+    !configOptions.auth
+  ) {
+    generateHomePage(projectName, appOptions)
   }
 
   // Installing UI components

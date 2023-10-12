@@ -1,4 +1,4 @@
-export const justTailwind = `export default function Home() {
+export const justNextWithTailwind = `export default function Home() {
   return (
     <main className='flex min-h-screen bg-gradient-to-br to-stone-300 dark:to-stone-800 from-sky-200 dark:from-sky-950 flex-col items-center justify-evenly p-24'>
       <div className='relative flex place-items-center flex-col justify-center'>
