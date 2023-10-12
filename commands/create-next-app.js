@@ -92,7 +92,7 @@ export default async function createNextApp(projectName, packageManager) {
       break
     case 'bun':
       pkg = 'bunx'
-      args.push('create-next-app')
+      args.push('create-next-app@latest')
       break
   }
   args.push(projectName)

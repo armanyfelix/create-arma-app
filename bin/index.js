@@ -368,15 +368,15 @@ async function notifyUpdate() {
     if (res?.latest) {
       const updateMessage =
         packageManager === 'yarn'
-          ? 'yarn global add create-ease-app'
+          ? 'yarn global add create-quick-app'
           : packageManager === 'pnpm'
-          ? 'pnpm add -g create-ease-app'
+          ? 'pnpm add -g create-quick-app'
           : packageManager === 'bun'
-          ? 'bun add -g create-ease-app'
-          : 'npm i -g create-ease-app'
+          ? 'bun add -g create-quick-app'
+          : 'npm i -g create-quick-app'
 
       log(
-        yellow(bold('A new version of `create-ease-app` is available!')) +
+        yellow(bold('A new version of `create-quick-app` is available!')) +
           '\n' +
           'You can update by running: ' +
           cyan(updateMessage) +

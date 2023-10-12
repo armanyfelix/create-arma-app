@@ -1,5 +1,5 @@
 {
-  "name": "create-ease-app",
+  "name": "create-quick-app",
   "version": "1.0.0",
   "description": "cli react app builder",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "test": "jest"
   },
   "bin": {
-    "create-ease-app": "bin/index.js"
+    "create-quick-app": "bin/index.js"
   },
   "keywords": [],
   "author": "Armany Felix",
