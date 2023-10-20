@@ -1,37 +1,33 @@
 import styles from './page.module.css'
 export default function Home() {
   return (
-    <main className='flex min-h-screen bg-gradient-to-br to-stone-300 dark:to-stone-800 from-sky-200 dark:from-sky-950 flex-col items-center justify-evenly p-24'>
-      <div className='relative flex place-items-center flex-col justify-center'>
-        <h1 className='text-8xl bg-gradient-to-br to-stone-700 dark:to-stone-500 via-blue-800 dark:via-blue-400 via-10% from-sky-800 dark:from-sky-500 bg-clip-text font-mono font-bold text-transparent sm:text-8xl'>
-          Create Quick App
-        </h1>
-        <p className='mt-14 text-2xl font-semibold dark:text-gray-300 text-center'>
+    <main className={styles.main}>
+      <div className={styles.hero}>
+        <h1 className={styles.title}>Create Quick App</h1>
+        <p className={styles.description}>
           This is your <span className='text-white'>Next.js</span> app. Have fun coding!
         </p>
       </div>
 
-      <div className='grid text-center dark:text-white lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left'>
+      <div className={styles.cards}>
         <a
           href='https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-neutral-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
           target='_blank'
           rel='noopener noreferrer'
         >
-          <h2 className='mb-3 text-2xl font-semibold'>
+          <h2>
             Docs{' '}
             <span className='inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none'>
               -&gt;
             </span>
           </h2>
-          <p className='m-0 max-w-[30ch] text-sm opacity-50'>
+          <p>
             Find in-depth information about Next.js features and API.
           </p>
         </a>
 
         <a
           href='https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-          className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-neutral-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
           target='_blank'
           rel='noopener noreferrer'
         >
@@ -48,7 +44,6 @@ export default function Home() {
 
         <a
           href='https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-neutral-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
           target='_blank'
           rel='noopener noreferrer'
         >
@@ -65,7 +60,6 @@ export default function Home() {
 
         <a
           href='https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className='group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30'
           target='_blank'
           rel='noopener noreferrer'
         >

@@ -5,7 +5,33 @@
   align-items: center;
   padding: 6rem;
   min-height: 100vh;
-  background-image: linear-gradient(to bottom right, #d6d3d1, )
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.hero {
+  display: flex;
+  position: relative;
+  place-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero h1 {
+  font-size: 6rem;
+  line-height: 1;
+  background-clip: text;
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  font-weight: 700;
+  color: transparent;
+}
+
+@media (min-width: 640px) {
+  .hero h1 {
+    font-size: 6rem/* 96px */;
+    line-height: 1;
+  }
 }
 
 .description {
@@ -17,22 +43,6 @@
   width: 100%;
   z-index: 2;
   font-family: var(--font-mono);
-}
-
-.description a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.description p {
-  position: relative;
-  margin: 0;
-  padding: 1rem;
-  background-color: rgba(var(--callout-rgb), 0.5);
-  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
-  border-radius: var(--border-radius);
 }
 
 .code {
